@@ -56,9 +56,10 @@ const CompCreateMessage = () => {
                         required
                     >
                         <option value="">Select status</option>
-                        <option value="active">Active</option>
-                        <option value="inactive">Inactive</option>
-                        <option value="pending">Pending</option>
+                        <option value="Rechazado">Rechazado</option>
+                        <option value="Expirado">Expirado</option>
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="Publicado">Publicado</option>
                     </select>
                 </div>
                 <div className='mb-3'>

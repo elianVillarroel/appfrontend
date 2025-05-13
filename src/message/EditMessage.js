@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
 const URI = 'https://appbackend-xer8.onrender.com/messages'
@@ -13,18 +13,19 @@ const CompEditMessage = () => {
     const navigate = useNavigate()
     const {id} = useParams()
 
-    useEffect(() => {
-        getMessageById()
-    }, [])
-
-    const getMessageById = async () => {
+    // Wrap getMessageById in useCallback to memoize it
+    const getMessageById = useCallback(async () => {
         const res = await axios.get(`${URI}/${id}`)
         setTitle(res.data.title)
         setDescription(res.data.description)
         setStatus(res.data.status)
         setFechaInicio(res.data.fechaInicio)
         setFechaFin(res.data.fechaFin)
-    }
+    }, [id]) // Add dependencies here
+
+    useEffect(() => {
+        getMessageById()
+    }, [getMessageById]) // Now getMessageById is properly included in dependencies
 
     const update = async (e) => {
         e.preventDefault()
@@ -66,9 +67,11 @@ const CompEditMessage = () => {
                         onChange={(e) => setStatus(e.target.value)}
                         className='form-control'
                     >
-                        <option value="active">Active</option>
-                        <option value="inactive">Inactive</option>
-                        <option value="pending">Pending</option>
+                        <option value="">Select status</option>
+                        <option value="Rechazado">Rechazado</option>
+                        <option value="Expirado">Expirado</option>
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="Publicado">Publicado</option>
                     </select>
                 </div>
                 <div className='mb-3'>
