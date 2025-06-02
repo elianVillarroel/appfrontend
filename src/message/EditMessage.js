@@ -4,6 +4,14 @@ import { useNavigate, useParams } from 'react-router-dom'
 
 const URI = 'https://appbackend-xer8.onrender.com/messages'
 
+// Datos de los destinatarios disponibles
+const DESTINATARIOS_OPTIONS = [
+    { id: 1, nombre: 'Recursos Humanos', descripcion: 'Prensa e imagen' },
+    { id: 2, nombre: 'App Móvil', descripcion: 'Direccion de Tecnologia' },
+    { id: 3, nombre: 'API', descripcion: 'Direccion de Gobierno Electronico, Direccion de Tecnologia' },
+    { id: 4, nombre: 'Email', descripcion: 'Direccion de Tecnologia' }
+]
+
 const CompEditMessage = () => {
     const [title, setTitle] = useState('')
     const [description, setDescription] = useState('')
@@ -12,6 +20,7 @@ const CompEditMessage = () => {
     const [fechaFin, setFechaFin] = useState('')
     const [hora_inicio, setHoraInicio] = useState('')
     const [hora_fin, setHoraFin] = useState('')
+    const [selectedDestinatarios, setSelectedDestinatarios] = useState([])
     const unidad_emisora = "Unidad organizacional" // Valor fijo
     const navigate = useNavigate()
     const {id} = useParams()
@@ -25,11 +34,26 @@ const CompEditMessage = () => {
         setFechaFin(res.data.fechaFin?.split('T')[0] || '') // Formatear fecha con manejo de nulos
         setHoraInicio(res.data.hora_inicio || '08:00')
         setHoraFin(res.data.hora_fin || '17:00')
+        
+        // Inicializar destinatarios seleccionados desde el CSV
+        if (res.data.destinatarios_csv) {
+            setSelectedDestinatarios(res.data.destinatarios_csv.split(',').map(Number))
+        }
     }, [id])
 
     useEffect(() => {
         getMessageById()
     }, [getMessageById])
+
+    const handleDestinatarioChange = (destinatarioId) => {
+        setSelectedDestinatarios(prev => {
+            if (prev.includes(destinatarioId)) {
+                return prev.filter(id => id !== destinatarioId)
+            } else {
+                return [...prev, destinatarioId]
+            }
+        })
+    }
 
     const update = async (e) => {
         e.preventDefault()
@@ -43,6 +67,15 @@ const CompEditMessage = () => {
             return
         }
 
+        // Validar que se haya seleccionado al menos un destinatario
+        if (selectedDestinatarios.length === 0) {
+            alert('Por favor selecciona al menos un destinatario')
+            return
+        }
+
+        // Convertir array de IDs a CSV
+        const destinatarios_csv = selectedDestinatarios.join(',')
+
         try {
             await axios.put(`${URI}/${id}`, {
                 title: title,
@@ -52,7 +85,8 @@ const CompEditMessage = () => {
                 fechaFin: fechaFin,
                 hora_inicio: hora_inicio,
                 hora_fin: hora_fin,
-                unidad_emisora: unidad_emisora // Valor fijo incluido
+                unidad_emisora: unidad_emisora,
+                destinatarios_csv: destinatarios_csv
             })
             navigate('/')
         } catch (error) {
@@ -153,6 +187,31 @@ const CompEditMessage = () => {
                         readOnly
                     />
                 </div>
+                
+                {/* Sección de Destinatarios */}
+                <div className='mb-3'>
+                    <label className='form-label'>Destinatarios (selecciona al menos uno)</label>
+                    <div className='destinatarios-checklist'>
+                        {DESTINATARIOS_OPTIONS.map(dest => (
+                            <div key={dest.id} className="form-check">
+                                <input
+                                    className="form-check-input"
+                                    type="checkbox"
+                                    id={`dest-${dest.id}`}
+                                    checked={selectedDestinatarios.includes(dest.id)}
+                                    onChange={() => handleDestinatarioChange(dest.id)}
+                                />
+                                <label className="form-check-label" htmlFor={`dest-${dest.id}`}>
+                                    <strong>{dest.nombre}</strong> - {dest.descripcion}
+                                </label>
+                            </div>
+                        ))}
+                    </div>
+                    {selectedDestinatarios.length === 0 && (
+                        <div className="text-danger small">Debes seleccionar al menos un destinatario</div>
+                    )}
+                </div>
+
                 <button type='submit' className='btn btn-primary'>Actualizar</button>
             </form>
         </div>
