@@ -244,3 +244,26 @@
   margin-bottom: 1rem;
   opacity: 0.5;
 }
+.dropzone {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.dropzone:hover {
+    background-color: #f8f9fa;
+}
+
+.img-thumbnail {
+    max-width: 100%;
+    height: auto;
+}
+
+.destinatarios-checklist {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.form-check {
+    margin-bottom: 8px;
+}

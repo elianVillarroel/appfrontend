@@ -1,4 +1,3 @@
-// src/App.js
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './Home';
 import CompShowMessages from './message/ShowMessage';
@@ -9,18 +8,42 @@ import CompCreateUnit from './unit/CreateUnit';
 import CompEditUnit from './unit/EditUnit';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
+import CompPrivateRoute from './private/PrivateRoute';
+import CompLogin from './login/Login';
 
 function App() {
     return (
         <Router>
             <Routes>
-                <Route path='/' element={<Home />} />
-                <Route path='/messages' element={<CompShowMessages />} />
-                <Route path='/create' element={<CompCreateMessage />} />
-                <Route path='/edit/:id' element={<CompEditMessage />} />
-                <Route path='/units' element={<CompShowUnits />} />
-                <Route path='/units/create' element={<CompCreateUnit />} />
-                <Route path='/units/edit/:id' element={<CompEditUnit />} />
+                <Route path="/login" element={<CompLogin />} />
+
+                <Route path="/" element={
+                    <CompPrivateRoute><Home /></CompPrivateRoute>
+                } />
+
+                <Route path="/messages" element={
+                    <CompPrivateRoute><CompShowMessages /></CompPrivateRoute>
+                } />
+
+                <Route path="/create" element={
+                    <CompPrivateRoute><CompCreateMessage /></CompPrivateRoute>
+                } />
+
+                <Route path="/edit/:id" element={
+                    <CompPrivateRoute><CompEditMessage /></CompPrivateRoute>
+                } />
+
+                <Route path="/units" element={
+                    <CompPrivateRoute><CompShowUnits /></CompPrivateRoute>
+                } />
+
+                <Route path="/units/create" element={
+                    <CompPrivateRoute><CompCreateUnit /></CompPrivateRoute>
+                } />
+
+                <Route path="/units/edit/:id" element={
+                    <CompPrivateRoute><CompEditUnit /></CompPrivateRoute>
+                } />
             </Routes>
         </Router>
     );
