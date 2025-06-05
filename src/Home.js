@@ -1,40 +1,42 @@
-// src/Home.js
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Container, Row, Col, Card, Button } from 'react-bootstrap';
+import AdminDashboard from './components/AdminDashboard';
+import InputDashboard from './components/InputDashboard';
+import OutputDashboard from './components/OutputDashboard';
 
 const Home = () => {
     const navigate = useNavigate();
 
-    return (
-        <Container className="mt-5">
-            <Row className="justify-content-center">
-                <Col md={6}>
-                    <Card className="text-center">
-                        <Card.Header as="h5">Sistema de Gestión</Card.Header>
-                        <Card.Body>
-                            <Card.Title>Seleccione una opción</Card.Title>
-                            <div className="d-grid gap-3">
-                                <Button 
-                                    variant="primary" 
-                                    size="lg"
-                                    onClick={() => navigate('/messages')}
-                                >
-                                    Gestionar Mensajes
-                                </Button>
-                                <Button 
-                                    variant="secondary" 
-                                    size="lg"
-                                    onClick={() => navigate('/units')}
-                                >
-                                    Gestionar Usuarios
-                                </Button>
-                            </div>
-                        </Card.Body>
-                    </Card>
-                </Col>
-            </Row>
-        </Container>
-    );
+    const userData = JSON.parse(localStorage.getItem('unidad'));
+    const token = localStorage.getItem('token');
+
+    useEffect(() => {
+        if (!token || !userData) {
+            navigate('/login');
+            return;
+        }
+
+        if (!userData.tipo) {
+            console.error('Datos de usuario incompletos en localStorage');
+            navigate('/login');
+        }
+    }, [navigate, token, userData]);
+
+    if (!token || !userData) {
+        return null; 
+    }
+
+    switch(userData.tipo) {
+        case 'administrator':
+            return <AdminDashboard />;
+        case 'input':
+            return <InputDashboard />;
+        case 'output':
+            return <OutputDashboard />;
+        default:
+            navigate('/login');
+            return null;
+    }
 };
 
 export default Home;

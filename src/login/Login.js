@@ -1,3 +1,4 @@
+// src/login/Login.js
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -9,21 +10,26 @@ const CompLogin = () => {
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    const handleLogin = async (e) => {
-        e.preventDefault();
-        try {
-            const res = await axios.post('https://appbackend-xer8.onrender.com/auth/login', {
-                usuario,
-                contraseña,
-            });
+const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+        const res = await axios.post('https://appbackend-xer8.onrender.com/auth/login', {
+            usuario,
+            contraseña,
+        });
 
-            localStorage.setItem('token', res.data.token);
-            localStorage.setItem('unidad', JSON.stringify(res.data.unidad));
-            navigate('/');
-        } catch (err) {
-            setError(err.response?.data?.message || 'Error al iniciar sesión');
+        // Verificar que la respuesta tenga la estructura esperada
+        if (!res.data.token || !res.data.unidad || !res.data.unidad.tipo) {
+            throw new Error('Respuesta del servidor incompleta');
         }
-    };
+
+        localStorage.setItem('token', res.data.token);
+        localStorage.setItem('unidad', JSON.stringify(res.data.unidad));
+        navigate('/');
+    } catch (err) {
+        setError(err.response?.data?.message || 'Error al iniciar sesión');
+    }
+};
 
     return (
         <Container className="mt-5">
