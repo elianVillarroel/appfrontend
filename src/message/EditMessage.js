@@ -1,80 +1,165 @@
-import axios from 'axios'
-import { useState, useEffect, useCallback } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import axios from 'axios';
+import { useState, useEffect, useCallback } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useDropzone } from 'react-dropzone';
 
-const URI = 'https://appbackend-xer8.onrender.com/messages'
+const URI = 'https://appbackend-xer8.onrender.com/messages';
 
-// Datos de los destinatarios disponibles
+// Configuración de Cloudinary (usa las mismas credenciales que en el create)
+const CLOUDINARY_CLOUD_NAME = 'dk6hzfbys';
+const CLOUDINARY_UPLOAD_PRESET = 'proyecto';
+
 const DESTINATARIOS_OPTIONS = [
-    { id: 1, nombre: 'Recursos Humanos', descripcion: 'Prensa e imagen' },
-    { id: 2, nombre: 'App Móvil', descripcion: 'Direccion de Tecnologia' },
-    { id: 3, nombre: 'API', descripcion: 'Direccion de Gobierno Electronico, Direccion de Tecnologia' },
-    { id: 4, nombre: 'Email', descripcion: 'Direccion de Tecnologia' }
-]
+    { 
+        id: 1, 
+        nombre: 'Recursos Humanos', 
+        descripcion: 'Unidad organizacional de Prensa e Imagen' 
+    },
+    { 
+        id: 2, 
+        nombre: 'App Móvil', 
+        descripcion: 'Unidad organizacional de Tecnología' 
+    },
+    { 
+        id: 3, 
+        nombre: 'API', 
+        descripcion: 'Unidad organizacional de Gobierno Electrónico y Unidad organizacional de Tecnología' 
+    },
+    { 
+        id: 4, 
+        nombre: 'Email', 
+        descripcion: 'Unidad organizacional de Tecnología' 
+    }
+];
 
 const CompEditMessage = () => {
-    const [title, setTitle] = useState('')
-    const [description, setDescription] = useState('')
-    const [status, setStatus] = useState('')
-    const [fechaInicio, setFechaInicio] = useState('')
-    const [fechaFin, setFechaFin] = useState('')
-    const [hora_inicio, setHoraInicio] = useState('')
-    const [hora_fin, setHoraFin] = useState('')
-    const [selectedDestinatarios, setSelectedDestinatarios] = useState([])
-    const unidad_emisora = "Unidad organizacional" // Valor fijo
-    const navigate = useNavigate()
-    const {id} = useParams()
+    const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');
+    const [status, setStatus] = useState('');
+    const [fechaInicio, setFechaInicio] = useState('');
+    const [fechaFin, setFechaFin] = useState('');
+    const [hora_inicio, setHoraInicio] = useState('');
+    const [hora_fin, setHoraFin] = useState('');
+    const [selectedDestinatarios, setSelectedDestinatarios] = useState([]);
+    const [file, setFile] = useState(null);
+    const [preview, setPreview] = useState('');
+    const [currentImage, setCurrentImage] = useState('');
+    const [uploading, setUploading] = useState(false);
+    const [unidad_emisora, setUnidadEmisora] = useState('');
+    const navigate = useNavigate();
+    const {id} = useParams();
+
+    // Configuración del área de dropzone
+    const { getRootProps, getInputProps, isDragActive } = useDropzone({
+        accept: {
+            'image/*': ['.jpeg', '.jpg', '.png', '.gif']
+        },
+        maxFiles: 1,
+        onDrop: acceptedFiles => {
+            const file = acceptedFiles[0];
+            setFile(file);
+            
+            // Crear vista previa
+            const reader = new FileReader();
+            reader.onload = () => {
+                setPreview(reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    });
 
     const getMessageById = useCallback(async () => {
-        const res = await axios.get(`${URI}/${id}`)
-        setTitle(res.data.title)
-        setDescription(res.data.description)
-        setStatus(res.data.status)
-        setFechaInicio(res.data.fechaInicio.split('T')[0]) // Formatear fecha
-        setFechaFin(res.data.fechaFin?.split('T')[0] || '') // Formatear fecha con manejo de nulos
-        setHoraInicio(res.data.hora_inicio || '08:00')
-        setHoraFin(res.data.hora_fin || '17:00')
+        const res = await axios.get(`${URI}/${id}`);
+        setTitle(res.data.title);
+        setDescription(res.data.description);
+        setStatus(res.data.status);
+        setFechaInicio(res.data.fechaInicio.split('T')[0]); // Formatear fecha
+        setFechaFin(res.data.fechaFin?.split('T')[0] || ''); // Formatear fecha con manejo de nulos
+        setHoraInicio(res.data.hora_inicio || '08:00');
+        setHoraFin(res.data.hora_fin || '17:00');
+        setCurrentImage(res.data.imagen_url || '');
         
         // Inicializar destinatarios seleccionados desde el CSV
         if (res.data.destinatarios_csv) {
-            setSelectedDestinatarios(res.data.destinatarios_csv.split(',').map(Number))
+            setSelectedDestinatarios(res.data.destinatarios_csv.split(',').map(Number));
         }
-    }, [id])
+    }, [id]);
 
     useEffect(() => {
-        getMessageById()
-    }, [getMessageById])
+        getMessageById();
+    }, [getMessageById]);
 
     const handleDestinatarioChange = (destinatarioId) => {
         setSelectedDestinatarios(prev => {
             if (prev.includes(destinatarioId)) {
-                return prev.filter(id => id !== destinatarioId)
+                return prev.filter(id => id !== destinatarioId);
             } else {
-                return [...prev, destinatarioId]
+                return [...prev, destinatarioId];
             }
-        })
-    }
+        });
+    };
+
+    // Subir imagen a Cloudinary
+    const uploadImage = async () => {
+        if (!file) return currentImage; // Si no hay archivo nuevo, mantener el existente
+        
+        setUploading(true);
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+
+        try {
+            const response = await axios.post(
+                `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+                formData,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                }
+            );
+            return response.data.secure_url;
+        } catch (error) {
+            console.error('Error uploading image:', error);
+            alert('Error al subir la imagen. Por favor intenta nuevamente.');
+            return null;
+        } finally {
+            setUploading(false);
+        }
+    };
+    useEffect(() => {
+        const userData = JSON.parse(localStorage.getItem('unidad'));
+        if (userData && userData.unidad) {
+            setUnidadEmisora(userData.unidad);
+        }
+    }, []);
 
     const update = async (e) => {
-        e.preventDefault()
+        e.preventDefault();
         
         // Validación de fechas y horas
-        const inicioCompleto = new Date(`${fechaInicio}T${hora_inicio}`)
-        const finCompleto = new Date(`${fechaFin}T${hora_fin}`)
+        const inicioCompleto = new Date(`${fechaInicio}T${hora_inicio}`);
+        const finCompleto = new Date(`${fechaFin}T${hora_fin}`);
         
         if (finCompleto <= inicioCompleto) {
-            alert('La fecha/hora de fin debe ser posterior a la de inicio')
-            return
+            alert('La fecha/hora de fin debe ser posterior a la de inicio');
+            return;
         }
 
         // Validar que se haya seleccionado al menos un destinatario
         if (selectedDestinatarios.length === 0) {
-            alert('Por favor selecciona al menos un destinatario')
-            return
+            alert('Por favor selecciona al menos un destinatario');
+            return;
+        }
+
+        // Subir imagen primero si existe
+        let imageUrl = await uploadImage();
+        if (file && !imageUrl) {
+            return; // El error ya se mostró en uploadImage
         }
 
         // Convertir array de IDs a CSV
-        const destinatarios_csv = selectedDestinatarios.join(',')
+        const destinatarios_csv = selectedDestinatarios.join(',');
 
         try {
             await axios.put(`${URI}/${id}`, {
@@ -86,14 +171,23 @@ const CompEditMessage = () => {
                 hora_inicio: hora_inicio,
                 hora_fin: hora_fin,
                 unidad_emisora: unidad_emisora,
-                destinatarios_csv: destinatarios_csv
-            })
-            navigate('/')
+                destinatarios_csv: destinatarios_csv,
+                imagen_url: imageUrl || currentImage || null // Mantener la imagen actual si no hay nueva
+            });
+            navigate('/');
         } catch (error) {
-            console.error('Error al actualizar mensaje:', error)
-            alert('Error al actualizar el mensaje')
+            console.error('Error al actualizar mensaje:', error);
+            alert('Error al actualizar el mensaje');
         }
-    }
+    };
+
+    // Eliminar imagen (tanto la seleccionada como la actual)
+    const handleRemoveImage = (e) => {
+        e.stopPropagation();
+        setFile(null);
+        setPreview('');
+        setCurrentImage('');
+    };
 
     return (
         <div className='container'>
@@ -116,6 +210,7 @@ const CompEditMessage = () => {
                         onChange={(e) => setDescription(e.target.value)}
                         className='form-control'
                         required
+                        rows={4}
                     />
                 </div>
                 <div className='mb-3'>
@@ -133,50 +228,54 @@ const CompEditMessage = () => {
                         <option value="Publicado">Publicado</option>
                     </select>
                 </div>
-                <div className='mb-3'>
-                    <label className='form-label'>Fecha de inicio</label>
-                    <input
-                        value={fechaInicio}
-                        onChange={(e) => setFechaInicio(e.target.value)}
-                        type="date"
-                        className='form-control'
-                        required
-                    />
+                <div className='row mb-3'>
+                    <div className='col-md-6'>
+                        <label className='form-label'>Fecha de inicio</label>
+                        <input
+                            value={fechaInicio}
+                            onChange={(e) => setFechaInicio(e.target.value)}
+                            type="date"
+                            className='form-control'
+                            required
+                        />
+                    </div>
+                    <div className='col-md-6'>
+                        <label className='form-label'>Hora de inicio</label>
+                        <input
+                            value={hora_inicio}
+                            onChange={(e) => setHoraInicio(e.target.value)}
+                            type="time"
+                            className='form-control'
+                            min="08:00"
+                            max="18:00"
+                            required
+                        />
+                    </div>
                 </div>
-                <div className='mb-3'>
-                    <label className='form-label'>Hora de inicio</label>
-                    <input
-                        value={hora_inicio}
-                        onChange={(e) => setHoraInicio(e.target.value)}
-                        type="time"
-                        className='form-control'
-                        min="08:00"
-                        max="18:00"
-                        required
-                    />
-                </div>
-                <div className='mb-3'>
-                    <label className='form-label'>Fecha de vencimiento</label>
-                    <input
-                        value={fechaFin}
-                        onChange={(e) => setFechaFin(e.target.value)}
-                        type="date"
-                        className='form-control'
-                        min={fechaInicio}
-                        required
-                    />
-                </div>
-                <div className='mb-3'>
-                    <label className='form-label'>Hora de vencimiento</label>
-                    <input
-                        value={hora_fin}
-                        onChange={(e) => setHoraFin(e.target.value)}
-                        type="time"
-                        className='form-control'
-                        min={fechaInicio === fechaFin ? hora_inicio : '08:00'}
-                        max="18:00"
-                        required
-                    />
+                <div className='row mb-3'>
+                    <div className='col-md-6'>
+                        <label className='form-label'>Fecha de vencimiento</label>
+                        <input
+                            value={fechaFin}
+                            onChange={(e) => setFechaFin(e.target.value)}
+                            type="date"
+                            className='form-control'
+                            min={fechaInicio}
+                            required
+                        />
+                    </div>
+                    <div className='col-md-6'>
+                        <label className='form-label'>Hora de vencimiento</label>
+                        <input
+                            value={hora_fin}
+                            onChange={(e) => setHoraFin(e.target.value)}
+                            type="time"
+                            className='form-control'
+                            min={fechaInicio === fechaFin ? hora_inicio : '08:00'}
+                            max="18:00"
+                            required
+                        />
+                    </div>
                 </div>
                 <div className='mb-3'>
                     <label className='form-label'>Unidad Emisora</label>
@@ -186,6 +285,72 @@ const CompEditMessage = () => {
                         className='form-control'
                         readOnly
                     />
+                </div>
+                
+                {/* Área para subir/editar imagen */}
+                <div className='mb-3'>
+                    <label className='form-label'>Imagen (opcional)</label>
+                    <div 
+                        {...getRootProps()} 
+                        className={`dropzone border rounded p-4 text-center ${isDragActive ? 'bg-light' : ''}`}
+                        style={{ borderStyle: isDragActive ? 'solid' : 'dashed' }}
+                    >
+                        <input {...getInputProps()} />
+                        {preview ? (
+                            <div>
+                                <img 
+                                    src={preview} 
+                                    alt="Vista previa de nueva imagen" 
+                                    className="img-thumbnail mb-2" 
+                                    style={{ maxHeight: '200px' }}
+                                />
+                                <p>{file.name}</p>
+                                <button 
+                                    type="button" 
+                                    className="btn btn-sm btn-danger"
+                                    onClick={handleRemoveImage}
+                                >
+                                    Eliminar imagen
+                                </button>
+                            </div>
+                        ) : currentImage ? (
+                            <div>
+                                <img 
+                                    src={currentImage} 
+                                    alt="Imagen actual" 
+                                    className="img-thumbnail mb-2" 
+                                    style={{ maxHeight: '200px' }}
+                                />
+                                <p>Imagen actual</p>
+                                <button 
+                                    type="button" 
+                                    className="btn btn-sm btn-danger"
+                                    onClick={handleRemoveImage}
+                                >
+                                    Eliminar imagen
+                                </button>
+                            </div>
+                        ) : (
+                            <div>
+                                <p className="mb-2">
+                                    {isDragActive ? 
+                                        'Suelta la imagen aquí' : 
+                                        'Arrastra una imagen aquí o haz clic para seleccionar'}
+                                </p>
+                                <p className="text-muted small">
+                                    Formatos aceptados: JPEG, JPG, PNG, GIF
+                                </p>
+                            </div>
+                        )}
+                    </div>
+                    {uploading && (
+                        <div className="mt-2 text-primary">
+                            <div className="spinner-border spinner-border-sm me-2" role="status">
+                                <span className="visually-hidden">Cargando...</span>
+                            </div>
+                            Subiendo imagen...
+                        </div>
+                    )}
                 </div>
                 
                 {/* Sección de Destinatarios */}
@@ -212,10 +377,30 @@ const CompEditMessage = () => {
                     )}
                 </div>
 
-                <button type='submit' className='btn btn-primary'>Actualizar</button>
+                <div className="d-flex justify-content-between mt-4">
+                    <button 
+                        type="button" 
+                        className="btn btn-secondary"
+                        onClick={() => navigate('/')}
+                    >
+                        Cancelar
+                    </button>
+                    <button 
+                        type="submit" 
+                        className="btn btn-primary" 
+                        disabled={uploading}
+                    >
+                        {uploading ? (
+                            <>
+                                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                Actualizando...
+                            </>
+                        ) : 'Actualizar Mensaje'}
+                    </button>
+                </div>
             </form>
         </div>
-    )
-}
+    );
+};
 
-export default CompEditMessage
+export default CompEditMessage;

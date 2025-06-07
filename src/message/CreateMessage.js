@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDropzone } from 'react-dropzone';
 
@@ -10,10 +10,26 @@ const CLOUDINARY_CLOUD_NAME = 'dk6hzfbys';
 const CLOUDINARY_UPLOAD_PRESET = 'proyecto';
 
 const DESTINATARIOS_OPTIONS = [
-    { id: 1, nombre: 'Recursos Humanos', descripcion: 'Prensa e imagen' },
-    { id: 2, nombre: 'App Móvil', descripcion: 'Direccion de Tecnologia' },
-    { id: 3, nombre: 'API', descripcion: 'Direccion de Gobierno Electronico, Direccion de Tecnologia' },
-    { id: 4, nombre: 'Email', descripcion: 'Direccion de Tecnologia' }
+    { 
+        id: 1, 
+        nombre: 'Recursos Humanos', 
+        descripcion: 'Unidad organizacional de Prensa e Imagen' 
+    },
+    { 
+        id: 2, 
+        nombre: 'App Móvil', 
+        descripcion: 'Unidad organizacional de Tecnología' 
+    },
+    { 
+        id: 3, 
+        nombre: 'API', 
+        descripcion: 'Unidad organizacional de Gobierno Electrónico y Unidad organizacional de Tecnología' 
+    },
+    { 
+        id: 4, 
+        nombre: 'Email', 
+        descripcion: 'Unidad organizacional de Tecnología' 
+    }
 ];
 
 const CompCreateMessage = () => {
@@ -25,7 +41,7 @@ const CompCreateMessage = () => {
     const [fechaFin, setFechaFin] = useState('');
     const [hora_inicio, setHoraInicio] = useState('');
     const [hora_fin, setHoraFin] = useState('');
-    const [unidad_emisora, setUnidadEmisora] = useState('Unidad Organizacional');
+    const [unidad_emisora, setUnidadEmisora] = useState('');
     const [selectedDestinatarios, setSelectedDestinatarios] = useState([]);
     
     // Estados para la imagen
@@ -93,6 +109,13 @@ const CompCreateMessage = () => {
             setUploading(false);
         }
     };
+        // Obtener la unidad del usuario al cargar el componente
+    useEffect(() => {
+        const userData = JSON.parse(localStorage.getItem('unidad'));
+        if (userData && userData.unidad) {
+            setUnidadEmisora(userData.unidad);
+        }
+    }, []);
 
     // Enviar el formulario
     const store = async (e) => {
