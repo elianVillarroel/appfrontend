@@ -267,3 +267,24 @@
 .form-check {
     margin-bottom: 8px;
 }
+
+.form-select-lg {
+    font-size: 1.1rem;
+    padding: 0.5rem 1rem;
+}
+
+
+.card-header {
+    padding: 1.25rem 1.5rem;
+}
+
+.btn-classify {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    font-weight: bold;
+}
+
+.btn-classify:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+}

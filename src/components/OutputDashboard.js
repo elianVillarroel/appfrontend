@@ -17,22 +17,22 @@ const OutputDashboard = () => {
                     Cerrar sesión
                 </Button>
             </div>
-            <h2 className="mb-4 text-center">Panel de Usuario Output</h2>
+            <h2 className="mb-4 text-center">Panel de Clasificación</h2>
             <Row className="justify-content-center">
                 <Col md={8}>
                     <Card className="text-center">
                         <Card.Body>
-                            <Card.Title>Visualización de Mensajes</Card.Title>
-                            <Card.Text>
-                                Visualiza y cambia el estado de los mensajes asignados a tu unidad.
+                            <Card.Title>Clasificación de Mensajes</Card.Title>
+                            <Card.Text className="mb-4">
+                                Cambia el estado de los mensajes pendientes asignados a tu unidad organizacional.
                             </Card.Text>
                             <Button 
                                 variant="primary" 
                                 size="lg"
-                                onClick={() => navigate('/messages')}
+                                onClick={() => navigate('/classify-info')}
                                 className="w-100"
                             >
-                                Ver Mensajes
+                                Clasificar Mensajes
                             </Button>
                         </Card.Body>
                     </Card>

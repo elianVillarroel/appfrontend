@@ -10,6 +10,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import CompPrivateRoute from './private/PrivateRoute';
 import CompLogin from './login/Login';
+import CompShowInfo from './classifyinfo/ShowInfo';
+import CompClassifyInfo from './classifyinfo/ClassifyInfo';
+
 
 function App() {
     return (
@@ -19,6 +22,12 @@ function App() {
 
                 <Route path="/" element={
                     <CompPrivateRoute><Home /></CompPrivateRoute>
+                } />
+                <Route path="/classify-info" element={
+                    <CompPrivateRoute><CompShowInfo /></CompPrivateRoute>
+                } />
+                <Route path="/classify-info/:id" element={
+                    <CompPrivateRoute><CompClassifyInfo /></CompPrivateRoute>
                 } />
 
                 <Route path="/messages" element={
