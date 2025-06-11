@@ -21,16 +21,16 @@ const InputDashboard = () => {
                 <Col md={6}>
                     <Card className="h-100">
                         <Card.Body className="text-center">
-                            <Card.Title>Gestión de Mensajes</Card.Title>
+                            <Card.Title>Gestión de información</Card.Title>
                             <Card.Text>
-                                Crear, editar, eliminar y visualizar tus mensajes.
+                                Crear, editar, eliminar y visualizar información.
                             </Card.Text>
                             <Button 
                                 variant="primary" 
                                 onClick={() => navigate('/messages')}
                                 className="w-100"
                             >
-                                Administrar Mensajes
+                                Administrar información
                             </Button>
                         </Card.Body>
                     </Card>
@@ -38,16 +38,16 @@ const InputDashboard = () => {
                 <Col md={6}>
                     <Card className="h-100">
                         <Card.Body className="text-center">
-                            <Card.Title>Crear Nuevo Mensaje</Card.Title>
+                            <Card.Title>Crear</Card.Title>
                             <Card.Text>
-                                Publica un nuevo mensaje en el sistema.
+                                Publica informacion en el sistema.
                             </Card.Text>
                             <Button 
                                 variant="success" 
                                 onClick={() => navigate('/create')}
                                 className="w-100"
                             >
-                                Nuevo Mensaje
+                                Nuevo
                             </Button>
                         </Card.Body>
                     </Card>

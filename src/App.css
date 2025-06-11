@@ -36,9 +36,7 @@
     transform: rotate(360deg);
   }
 }
-/* App.css */
 
-/* Variables de color */
 :root {
   --primary: #3498db;
   --primary-dark: #2980b9;
@@ -51,14 +49,13 @@
   --gray: #95a5a6;
 }
 
-/* Estilos base */
+
 .container-lg {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 15px;
 }
 
-/* Cards */
 .card {
   border: none;
   border-radius: 8px;
@@ -76,7 +73,6 @@
   padding: 1.5rem;
 }
 
-/* Tablas */
 .table-responsive {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
@@ -105,7 +101,6 @@
   background-color: rgba(0, 0, 0, 0.02);
 }
 
-/* Badges */
 .badge {
   padding: 6px 10px;
   border-radius: 4px;
@@ -145,7 +140,6 @@
   color: var(--dark);
 }
 
-/* Botones */
 .btn {
   padding: 8px 16px;
   border-radius: 4px;
@@ -224,7 +218,6 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-/* Spinner */
 .spinner-container {
   display: flex;
   justify-content: center;
@@ -232,7 +225,6 @@
   min-height: 200px;
 }
 
-/* Empty state */
 .empty-state {
   padding: 3rem 1rem;
   text-align: center;
@@ -287,4 +279,237 @@
 .btn-classify:hover {
     background-color: #5a6268;
     border-color: #545b62;
+}
+
+.login-container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  display: flex;
+  flex-direction: column;
+}
+
+.login-header {
+  background-color: #282c34;
+  padding: 2rem;
+  text-align: center;
+  color: white;
+}
+
+.login-header h1 {
+  margin: 0;
+  font-size: 2.5rem;
+}
+
+.login-form-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+/* Login Card */
+.login-card {
+  width: 100%;
+  max-width: 500px;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border: none;
+}
+
+.login-title {
+  font-size: 1.2rem;
+  color: #333;
+  margin-bottom: 2rem;
+  text-align: center;
+  font-weight: normal;
+}
+
+.login-input {
+  padding: 12px 15px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+.login-input:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+}
+
+.login-button {
+  padding: 12px;
+  font-size: 1.1rem;
+  border-radius: 6px;
+  background-color: #3498db;
+  border: none;
+}
+
+.login-button:hover {
+  background-color: #2980b9;
+}
+
+/* Login Links */
+.login-links {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 1.5rem;
+}
+
+.login-link {
+  color: #3498db;
+  text-decoration: none;
+  margin-bottom: 0.8rem;
+  font-size: 0.9rem;
+}
+
+.login-link:hover {
+  text-decoration: underline;
+}
+
+:root {
+  --primary-color: #3498db;
+  --secondary-color: #2c3e50;
+  --success-color: #2ecc71;
+  --danger-color: #e74c3c;
+  --warning-color: #f39c12;
+  --info-color: #1abc9c;
+  --light-color: #ecf0f1;
+  --dark-color: #34495e;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f8f9fa;
+  color: #333;
+  line-height: 1.6;
+}
+
+.login-container {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+}
+
+.login-logo {
+  max-width: 100%;
+  height: auto;
+}
+
+.card {
+  border: none;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.btn {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+  background-color: #2980b9;
+  border-color: #2980b9;
+}
+
+.form-control {
+  border-radius: 5px;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+}
+
+.form-control:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+}
+
+.input-group-text {
+  background-color: #f8f9fa;
+  border-right: none;
+}
+
+.input-group .form-control {
+  border-left: none;
+}
+
+.table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.table thead th {
+  background-color: var(--light-color);
+  border-bottom: 2px solid #dee2e6;
+  font-weight: 600;
+}
+
+.table-hover tbody tr:hover {
+  background-color: rgba(52, 152, 219, 0.1);
+}
+
+.badge {
+  font-weight: 500;
+  padding: 5px 10px;
+  border-radius: 50px;
+}
+
+.badge-primary {
+  background-color: var(--primary-color);
+}
+
+.badge-secondary {
+  background-color: var(--secondary-color);
+}
+
+.badge-success {
+  background-color: var(--success-color);
+}
+
+.badge-danger {
+  background-color: var(--danger-color);
+}
+
+.badge-warning {
+  background-color: var(--warning-color);
+}
+
+.badge-info {
+  background-color: var(--info-color);
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 0;
+  color: #6c757d;
+}
+
+.empty-state i {
+  font-size: 3rem;
+  margin-bottom: 15px;
+  color: #adb5bd;
+}
+
+@media (max-width: 768px) {
+  .card {
+    margin-top: 20px;
+  }
 }

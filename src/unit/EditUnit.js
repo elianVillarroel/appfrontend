@@ -4,7 +4,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 const URI = 'https://appbackend-xer8.onrender.com/unidades';
 
-// Opciones predefinidas para unidades organizacionales
 const UNIDADES_OPTIONS = [
     "Unidad Organizacional de Obras Públicas",
     "Unidad Organizacional de Movilidad",

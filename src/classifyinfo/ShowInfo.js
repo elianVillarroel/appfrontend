@@ -1,10 +1,9 @@
 import axios from 'axios'
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const URI = 'https://appbackend-xer8.onrender.com/messages'
 
-// Opciones de destinatarios (debería importarse desde un archivo de configuración)
 const DESTINATARIOS_OPTIONS = [
     { 
         id: 1, 
@@ -32,13 +31,12 @@ const CompShowInfo = () => {
     const [messages, setMessages] = useState([])
     const [loading, setLoading] = useState(true)
     const [userDestinatarioId, setUserDestinatarioId] = useState(null)
+    const navigate = useNavigate()
     
-    // Obtener datos del usuario desde localStorage
     const userData = JSON.parse(localStorage.getItem('unidad')) || {}
-    const userUnit = userData.unidad // Nombre de la unidad del usuario
+    const userUnit = userData.unidad 
     
     useEffect(() => {
-        // Encontrar el ID de destinatario que coincide con la unidad del usuario
         const destinatario = DESTINATARIOS_OPTIONS.find(d => 
             d.nombre.toLowerCase().includes(userUnit.toLowerCase()) || 
             d.descripcion.toLowerCase().includes(userUnit.toLowerCase())
@@ -61,7 +59,6 @@ const CompShowInfo = () => {
                 }
             })
             
-            // Filtrar mensajes donde el destinatario_csv incluya el ID del destinatario del usuario
             const filteredMessages = res.data.filter(message => {
                 if (!message.destinatarios_csv) return false
                 const destinatarios = message.destinatarios_csv.split(',').map(Number)
@@ -106,10 +103,18 @@ const CompShowInfo = () => {
     return (
         <div className='container-lg'>
             <div className='d-flex justify-content-between align-items-center mb-4'>
-                <h2 className='text-primary'>Mensajes para Clasificar</h2>
+                <div>
+                    <button 
+                        onClick={() => navigate(-1)} 
+                        className="btn btn-outline-secondary me-2"
+                    >
+                        <i className="fas fa-arrow-left me-2"></i>Volver
+                    </button>
+                    <h2 className='text-primary d-inline-block'>Información por clasificar</h2>
+                </div>
                 {userDestinatarioId && (
                     <div className="alert alert-info mb-0">
-                        Mostrando mensajes para: <strong>{userUnit}</strong>
+                        Mostrando información para: <strong>{userUnit}</strong>
                     </div>
                 )}
             </div>
@@ -121,11 +126,12 @@ const CompShowInfo = () => {
                             <div className="spinner-border text-primary" role="status">
                                 <span className="visually-hidden">Cargando...</span>
                             </div>
+                            <p className="mt-2">Cargando mensajes...</p>
                         </div>
                     ) : (
                         <div className="table-responsive">
                             <table className='table table-hover'>
-                                <thead>
+                                <thead className="table-light">
                                     <tr>
                                         <th>Título</th>
                                         <th>Unidad Emisora</th>
@@ -167,7 +173,6 @@ const CompShowInfo = () => {
                                                     <Link 
                                                         to={`/classify-info/${message.id}`} 
                                                         className="btn btn-sm btn-primary"
-                                                        title="Clasificar"
                                                     >
                                                         <i className="fas fa-edit me-1"></i> Clasificar
                                                     </Link>
@@ -178,7 +183,7 @@ const CompShowInfo = () => {
                                         <tr>
                                             <td colSpan={6} className='text-center py-5'>
                                                 <i className="fas fa-inbox fa-3x text-muted mb-3"></i>
-                                                <p className='mb-0'>No hay mensajes para clasificar</p>
+                                                <p className='h5'>No hay información para clasificar</p>
                                                 {!userDestinatarioId && (
                                                     <small className='text-danger'>
                                                         No se encontró coincidencia entre su unidad y los destinatarios disponibles

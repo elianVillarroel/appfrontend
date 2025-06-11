@@ -22,16 +22,16 @@ const AdminDashboard = () => {
                 <Col md={6}>
                     <Card className="h-100">
                         <Card.Body className="text-center">
-                            <Card.Title>Gestión de Mensajes</Card.Title>
+                            <Card.Title>Gestión de información</Card.Title>
                             <Card.Text>
-                                Crear, editar, eliminar y visualizar todos los mensajes del sistema.
+                                Crear, editar, eliminar y visualizar toda la información del sistema.
                             </Card.Text>
                             <Button 
                                 variant="primary" 
                                 onClick={() => navigate('/messages')}
                                 className="w-100"
                             >
-                                Administrar Mensajes
+                                Administrar información
                             </Button>
                         </Card.Body>
                     </Card>

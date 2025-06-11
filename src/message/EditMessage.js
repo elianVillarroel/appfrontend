@@ -5,7 +5,7 @@ import { useDropzone } from 'react-dropzone';
 
 const URI = 'https://appbackend-xer8.onrender.com/messages';
 
-// Configuración de Cloudinary (usa las mismas credenciales que en el create)
+
 const CLOUDINARY_CLOUD_NAME = 'dk6hzfbys';
 const CLOUDINARY_UPLOAD_PRESET = 'proyecto';
 

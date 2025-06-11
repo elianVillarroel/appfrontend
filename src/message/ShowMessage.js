@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const URI = 'https://appbackend-xer8.onrender.com/messages'
 
@@ -8,11 +8,10 @@ const CompShowMessages = () => {
     const [allMessages, setAllMessages] = useState([])
     const [filteredMessages, setFilteredMessages] = useState([])
     const [loading, setLoading] = useState(true)
-    
-    // Obtener datos del usuario desde localStorage
     const userData = JSON.parse(localStorage.getItem('unidad')) || {}
-    const userUnit = userData.unidad // Nombre de la unidad del usuario
+    const userUnit = userData.unidad 
     const isAdmin = userData.tipo === 'administrator'
+    const navigate = useNavigate()
     
     useEffect(() => {
         getMessages()
@@ -28,19 +27,15 @@ const CompShowMessages = () => {
             })
             
             setAllMessages(res.data)
-            
-            // Filtrar mensajes según el tipo de usuario
+
             if (isAdmin) {
-                // Administrador ve todos los mensajes
                 setFilteredMessages(res.data)
             } else if (userUnit) {
-                // Usuario normal: filtrar por unidad emisora
                 const filtered = res.data.filter(message => 
                     message.unidad_emisora === userUnit
                 )
                 setFilteredMessages(filtered)
             } else {
-                // Si no hay unidad definida, no mostrar mensajes
                 setFilteredMessages([])
             }
         } catch (error) {
@@ -86,21 +81,29 @@ const CompShowMessages = () => {
     
     const getStatusColor = (status) => {
         switch(status) {
-            case 'Publicado': return 'badge-secondary'
-            case 'Pendiente': return 'badge-warning'
-            case 'Expirado': return 'badge-light'
-            case 'Rechazado': return 'badge-danger'
-            default: return 'badge-primary'
+            case 'Publicado': return 'badge bg-success'
+            case 'Pendiente': return 'badge bg-warning text-dark'
+            case 'Expirado': return 'badge bg-light text-dark'
+            case 'Rechazado': return 'badge bg-danger'
+            default: return 'badge bg-primary'
         }
     }
     
     return (
         <div className='container-lg'>
             <div className='d-flex justify-content-between align-items-center mb-4'>
-                <h2 className='text-primary'>Gestión de Mensajes</h2>
+                <div>
+                    <button 
+                        onClick={() => navigate('/')} 
+                        className="btn btn-outline-secondary me-2"
+                    >
+                        <i className="fas fa-arrow-left me-2"></i>Volver
+                    </button>
+                    <h2 className='text-primary d-inline-block'>Gestión de información</h2>
+                </div>
                 {(isAdmin || userData.tipo === 'input') && (
                     <Link to="/create" className='btn btn-primary'>
-                        <i className="fas fa-plus me-2"></i>Nuevo Mensaje
+                        <i className="fas fa-plus me-2"></i>Nuevo
                     </Link>
                 )}
             </div>
@@ -114,15 +117,16 @@ const CompShowMessages = () => {
             <div className="card shadow-sm">
                 <div className="card-body p-0">
                     {loading ? (
-                        <div className="spinner-container">
+                        <div className="text-center py-4">
                             <div className="spinner-border text-primary" role="status">
                                 <span className="visually-hidden">Cargando...</span>
                             </div>
+                            <p className="mt-2">Cargando...</p>
                         </div>
                     ) : (
                         <div className="table-responsive">
                             <table className='table table-hover'>
-                                <thead>
+                                <thead className="table-light">
                                     <tr>
                                         <th>Título</th>
                                         {isAdmin && <th>Unidad Emisora</th>}
@@ -166,17 +170,15 @@ const CompShowMessages = () => {
                                                     <div className='d-flex justify-content-end gap-2'>
                                                         <Link 
                                                             to={`/edit/${message.id}`} 
-                                                            className="btn btn-sm btn-outline-primary"
-                                                            title="Editar"
+                                                            className="btn btn-sm btn-primary"
                                                         >
-                                                            <i className="fas fa-edit"></i>
+                                                            <i className="fas fa-edit me-1"></i>Editar
                                                         </Link>
                                                         <button 
                                                             onClick={() => deleteMessage(message.id)} 
-                                                            className='btn btn-sm btn-outline-danger'
-                                                            title="Eliminar"
+                                                            className='btn btn-sm btn-danger'
                                                         >
-                                                            <i className="fas fa-trash-alt"></i>
+                                                            <i className="fas fa-trash-alt me-1"></i>Eliminar
                                                         </button>
                                                     </div>
                                                 </td>
@@ -184,9 +186,11 @@ const CompShowMessages = () => {
                                         ))
                                     ) : (
                                         <tr>
-                                            <td colSpan={isAdmin ? 6 : 5} className='empty-state'>
-                                                <i className="fas fa-inbox"></i>
-                                                <p>No hay mensajes para mostrar</p>
+                                            <td colSpan={isAdmin ? 6 : 5} className='text-center py-4'>
+                                                <div className="empty-state">
+                                                    <i className="fas fa-inbox fa-3x text-muted mb-3"></i>
+                                                    <p className="h5 text-muted">No hay mensajes para mostrar</p>
+                                                </div>
                                             </td>
                                         </tr>
                                     )}

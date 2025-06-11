@@ -22,9 +22,9 @@ const OutputDashboard = () => {
                 <Col md={8}>
                     <Card className="text-center">
                         <Card.Body>
-                            <Card.Title>Clasificación de Mensajes</Card.Title>
+                            <Card.Title>Clasificación de información</Card.Title>
                             <Card.Text className="mb-4">
-                                Cambia el estado de los mensajes pendientes asignados a tu unidad organizacional.
+                                Cambia el estado de la información pendiente asignados a tu unidad organizacional.
                             </Card.Text>
                             <Button 
                                 variant="primary" 
@@ -32,7 +32,7 @@ const OutputDashboard = () => {
                                 onClick={() => navigate('/classify-info')}
                                 className="w-100"
                             >
-                                Clasificar Mensajes
+                                Clasificar
                             </Button>
                         </Card.Body>
                     </Card>
