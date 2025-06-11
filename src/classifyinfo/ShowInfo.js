@@ -105,7 +105,7 @@ const CompShowInfo = () => {
             <div className='d-flex justify-content-between align-items-center mb-4'>
                 <div>
                     <button 
-                        onClick={() => navigate(-1)} 
+                        onClick={() => navigate('/')} 
                         className="btn btn-outline-secondary me-2"
                     >
                         <i className="fas fa-arrow-left me-2"></i>Volver
